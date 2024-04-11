@@ -1,0 +1,82 @@
+import java.util.*
+
+fun main() {
+    val board = Array(3) { CharArray(3) { ' ' } }
+    var currentPlayer = 'X'
+    var gameOver = false
+
+    printBoard(board)
+
+    while (!gameOver) {
+        println("Player $currentPlayer's turn")
+        val row = readLine()?.toIntOrNull()?.minus(1) ?: continue
+        val col = readLine()?.toIntOrNull()?.minus(1) ?: continue
+
+        if (row !in 0..2 || col !in 0..2 || board[row][col] != ' ') {
+            println("Invalid move, try again")
+            continue
+        }
+
+        board[row][col] = currentPlayer
+        printBoard(board)
+
+        if (checkWin(board, currentPlayer)) {
+            println("Player $currentPlayer wins!")
+            gameOver = true
+        } else if (isBoardFull(board)) {
+            println("It's a tie!")
+            gameOver = true
+        } else {
+            currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
+        }
+    }
+
+    println("Game over. Play again? (y/n)")
+    if (readLine()?.toLowerCase(Locale.getDefault()) == "y") {
+        main()
+    }
+}
+
+fun printBoard(board: Array<CharArray>) {
+    for (row in board) {
+        println(row.joinToString(" "))
+    }
+    println()
+}
+
+fun checkWin(board: Array<CharArray>, player: Char): Boolean {
+    // Check rows
+    for (row in board) {
+        if (row.all { it == player }) {
+            return true
+        }
+    }
+
+    // Check columns
+    for (col in 0 until 3) {
+        if (board[0][col] == player && board[1][col] == player && board[2][col] == player) {
+            return true
+        }
+    }
+
+    // Check diagonals
+    if (board[0][0] == player && board[1][1] == player && board[2][2] == player) {
+        return true
+    }
+    if (board[0][2] == player && board[1][1] == player && board[2][0] == player) {
+        return true
+    }
+
+    return false
+}
+
+fun isBoardFull(board: Array<CharArray>): Boolean {
+    for (row in board) {
+        for (cell in row) {
+            if (cell == ' ') {
+                return false
+            }
+        }
+    }
+    return true
+}
